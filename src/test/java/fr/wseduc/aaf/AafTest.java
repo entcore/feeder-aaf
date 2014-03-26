@@ -7,12 +7,18 @@ import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+import org.neo4j.graphdb.DynamicLabel;
+import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.schema.ConstraintCreator;
+import org.neo4j.kernel.GraphDatabaseAPI;
 import org.neo4j.server.CommunityNeoServer;
 import org.neo4j.server.helpers.CommunityServerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -27,7 +33,7 @@ public class AafTest {
 		server = CommunityServerBuilder
 				.server()
 				.onPort(40000)
-				.withThirdPartyJaxRsPackage("fr.wseduc.aaf", "/wse")
+				.withThirdPartyJaxRsPackage("fr.wseduc.aaf", "/aaf")
 				.build();
 		server.start();
 	}
@@ -39,9 +45,18 @@ public class AafTest {
 
 	@Test
 	public void importFiles() {
-		log.info(server.baseUri().toString() + "wse/aaf/import");
+		Transaction tx = server.getDatabase().getGraph().beginTx();
+		ConstraintCreator c = server.getDatabase().getGraph().schema()
+				.constraintFor(DynamicLabel.label("Structure"));
+		c.assertPropertyIsUnique("id");
+		c.assertPropertyIsUnique("externalId");
+		c.assertPropertyIsUnique("UAI");
+		tx.success();
+		tx.close();
+
+		log.info(server.baseUri().toString() + "aaf/import");
 		ClientResponse.Status status = jerseyClient()
-				.resource(server.baseUri().toString() + "wse/aaf/import")
+				.resource(server.baseUri().toString() + "aaf/import")
 				.post(ClientResponse.class).getClientResponseStatus();
 
 		assertEquals(ClientResponse.Status.OK, status);
