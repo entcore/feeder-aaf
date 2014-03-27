@@ -1,6 +1,7 @@
 package fr.wseduc.aaf;
 
 import fr.wseduc.aaf.dictionary.Structure;
+import org.neo4j.graphdb.Transaction;
 import org.vertx.java.core.json.JsonObject;
 
 import static fr.wseduc.aaf.dictionary.DefaultProfiles.*;
@@ -14,18 +15,22 @@ public class StructureImportProcessing extends BaseImportProcessing {
 	@Override
 	public void start() throws Exception {
 		// create profiles
-		importer.createProfile(STUDENT_PROFILE);
-		importer.createProfile(RELATIVE_PROFILE);
-		importer.createProfile(PERSONNEL_PROFILE);
-		importer.createProfile(TEACHER_PROFILE);
+		Transaction tx = importer.getDb().beginTx();
+		try {
+			importer.createProfile(STUDENT_PROFILE);
+			importer.createProfile(RELATIVE_PROFILE);
+			importer.createProfile(PERSONNEL_PROFILE);
+			importer.createProfile(TEACHER_PROFILE);
+			tx.success();
+		} catch (Exception e) {
+			tx.failure();
+			throw e;
+		} finally {
+			tx.close();
+		}
 		// parse etab file
 		parse(new FieldOfStudyImportProcessing(path));
 	}
-
-	private void createOrUpdateProfiles() {
-
-	}
-
 
 	@Override
 	public String getMappingResource() {

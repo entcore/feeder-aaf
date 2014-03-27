@@ -2,7 +2,6 @@ package fr.wseduc.aaf;
 
 import fr.wseduc.aaf.dictionary.Importer;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vertx.java.core.json.JsonObject;
@@ -38,16 +37,12 @@ public class Aaf {
 			importer.init(database);
 		}
 		String path = new JsonObject(json).getString("path");
-		Transaction tx = database.beginTx();
 		try {
 			new StructureImportProcessing(path).start();
-			tx.success();
 		} catch (Exception e) {
-			tx.failure();
 			log.error(e.getMessage(), e);
 			return  Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		} finally {
-			tx.close();
 			importer.clear();
 		}
 		return Response.status(Response.Status.OK).build();
