@@ -5,7 +5,9 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vertx.java.core.json.JsonObject;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -25,8 +27,9 @@ public class Aaf {
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/import")
-	public Response importAAF() {
+	public Response importAAF(final String json) {
 		Importer importer = Importer.getInstance();
 		synchronized (this) {
 			if (!importer.isReady()) {
@@ -34,8 +37,8 @@ public class Aaf {
 			}
 			importer.init(database);
 		}
+		String path = new JsonObject(json).getString("path");
 		Transaction tx = database.beginTx();
-		String path = "/home/dboissin/Docs/aaf2d/20130117_fix";
 		try {
 			new StructureImportProcessing(path).start();
 			tx.success();
