@@ -50,6 +50,9 @@ public class Profile {
 	public void create() {
 		node = getDb().createNode(DynamicLabel.label("Profile"));
 		JsonUtil.jsonToNode(profile, node);
+		Node dpgNode = getDb().createNode(DynamicLabel.label("Group"),
+				DynamicLabel.label("ProfileGroup"), DynamicLabel.label("DefaultProfileGroup"));
+		dpgNode.createRelationshipTo(node, DynamicRelationshipType.withName("HAS_PROFILE"));
 	}
 
 	public void createFunctionIfAbsent(String functionExternalId, String name) {
