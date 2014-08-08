@@ -1,5 +1,6 @@
 package fr.wseduc.aaf;
 
+import fr.wseduc.aaf.dictionary.DefaultFunctions;
 import fr.wseduc.aaf.dictionary.Structure;
 import org.neo4j.graphdb.Transaction;
 import org.vertx.java.core.json.JsonObject;
@@ -21,6 +22,7 @@ public class StructureImportProcessing extends BaseImportProcessing {
 			importer.createProfile(RELATIVE_PROFILE);
 			importer.createProfile(PERSONNEL_PROFILE);
 			importer.createProfile(TEACHER_PROFILE);
+			DefaultFunctions.createOrUpdateFunctions(importer);
 			tx.success();
 		} catch (Exception e) {
 			tx.failure();

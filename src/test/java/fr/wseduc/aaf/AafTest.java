@@ -14,12 +14,22 @@ import org.neo4j.graphdb.schema.ConstraintCreator;
 import org.neo4j.kernel.GraphDatabaseAPI;
 import org.neo4j.server.CommunityNeoServer;
 import org.neo4j.server.helpers.CommunityServerBuilder;
+import org.neo4j.shell.util.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vertx.java.core.Handler;
+import org.vertx.java.core.eventbus.Message;
+import org.vertx.java.core.json.JsonArray;
+import org.vertx.java.core.json.JsonObject;
 
+import javax.ws.rs.core.MediaType;
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import static fr.wseduc.aaf.Util.createPostData;
+import static fr.wseduc.aaf.Util.toCypherUri;
+import static fr.wseduc.aaf.Util.toJson;
 import static junit.framework.Assert.assertEquals;
 
 
@@ -33,6 +43,7 @@ public class AafTest {
 		server = CommunityServerBuilder
 				.server()
 				.onPort(40000)
+				.withAutoIndexingEnabledForNodes("externalId")
 				.withThirdPartyJaxRsPackage("fr.wseduc.aaf", "/aaf")
 				.build();
 		server.start();
@@ -55,11 +66,39 @@ public class AafTest {
 		tx.close();
 
 		log.info(server.baseUri().toString() + "aaf/import");
-		ClientResponse.Status status = jerseyClient()
+		ClientResponse resp = jerseyClient()
 				.resource(server.baseUri().toString() + "aaf/import")
-				.post(ClientResponse.class).getClientResponseStatus();
+				.type("application/json")
+				.post(ClientResponse.class, "{\"path\":\"src/test/resources/aaf-test\"}");
+		resp.close();
 
-		assertEquals(ClientResponse.Status.OK, status);
+		assertEquals(ClientResponse.Status.OK, resp.getClientResponseStatus());
+
+		String query =
+				"MATCH (:User) WITH count(*) as nbUsers " +
+				"MATCH (:Structure) WITH count(*) as nbStructures, nbUsers " +
+				"MATCH (:Class) WITH nbUsers, nbStructures, count(*) as nbClasses " +
+				"MATCH (:FunctionalGroup) WITH nbUsers, nbStructures, nbClasses, count(*) as nbFunctionalGroups " +
+				"MATCH (:ProfileGroup) " +
+				"RETURN nbUsers, nbStructures, nbClasses, nbFunctionalGroups, count(*) as nbProfileGroups";
+		String json = toJson(createPostData(query, null));
+		ClientResponse response = Client.create()
+				.resource(toCypherUri(server.baseUri().toString()))
+				.accept(MediaType.APPLICATION_JSON_TYPE)
+				.type(MediaType.APPLICATION_JSON_TYPE)
+				.header("X-Stream", "true")
+				.post(ClientResponse.class, json);
+		String res = response.getEntity(String.class);
+		log.info(res);
+		JsonObject result = new JsonObject(res);
+		response.close();
+
+		JsonArray r = result.getArray("data").get(0);
+		assertEquals(15290, r.get(0));
+		assertEquals(10, r.get(1));
+		assertEquals(177, r.get(2));
+		assertEquals(177, r.get(3));
+		assertEquals(177 * 4 + 10 * 4 + 4, r.get(4));
 	}
 
 	private Client jerseyClient() {

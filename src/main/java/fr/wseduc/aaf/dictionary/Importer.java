@@ -370,4 +370,8 @@ public class Importer {
 		return structures.get(externalId);
 	}
 
+	public Profile getProfile(String externalId) {
+		return profiles.get(externalId);
+	}
+
 }
