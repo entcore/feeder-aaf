@@ -3,12 +3,16 @@ package fr.wseduc.aaf;
 import fr.wseduc.aaf.dictionary.Importer;
 import org.vertx.java.core.json.JsonObject;
 
+import java.util.Set;
+
 public class UserImportProcessing extends BaseImportProcessing {
 
 	private final Importer importer = Importer.getInstance();
+	protected final Set<String> resp;
 
-	protected UserImportProcessing(String path) {
+	protected UserImportProcessing(String path, Set<String> resp) {
 		super(path);
+		this.resp = resp;
 	}
 
 	@Override
@@ -23,7 +27,9 @@ public class UserImportProcessing extends BaseImportProcessing {
 
 	@Override
 	public void process(JsonObject object) {
-		importer.createUser(object);
+		if (resp.contains(object.getString("externalId"))) {
+			importer.createUser(object);
+		}
 	}
 
 	@Override

@@ -94,7 +94,7 @@ public class AafTest {
 		response.close();
 
 		JsonArray r = result.getArray("data").get(0);
-		assertEquals(15290, r.get(0));
+		assertEquals(13295, r.get(0));
 		assertEquals(10, r.get(1));
 		assertEquals(177, r.get(2));
 		assertEquals(177, r.get(3));

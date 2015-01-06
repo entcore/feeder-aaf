@@ -37,7 +37,7 @@ public class StudentImportProcessing extends BaseImportProcessing {
 			for (Object o : relative) {
 				if (!(o instanceof String)) continue;
 				String [] r = ((String) o).split("\\$");
-				if (r.length > 2) {
+				if (r.length == 6 && !"0".equals(r[3])) {
 					res.add(r[0]);
 				}
 			}

@@ -10,7 +10,7 @@ public class ModuleImportProcessing extends BaseImportProcessing {
 
 	@Override
 	public void start() throws Exception {
-		parse(new UserImportProcessing(path));
+		parse(new StudentImportProcessing0(path));
 	}
 
 	@Override
