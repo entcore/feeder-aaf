@@ -143,7 +143,8 @@ public class Importer {
 		}
 	}
 
-	public void createPersonnel(JsonObject object, String profileExternalId, String[][] linkClasses,
+	public void createPersonnel(JsonObject object, String profileExternalId,
+			Set<String> structuresByFunctions, String[][] linkClasses,
 			String[][] linkGroups) {
 		final String error = personnelValidator.validate(object);
 		if (error != null) {
@@ -159,10 +160,18 @@ public class Importer {
 					Structure s = this.structures.get(o);
 					if (s != null) {
 						Node structure = s.getNode();
-						Node spg = s.getProfileGroup(profileExternalId);
 						if (structure != null) {
 							u.createRelationshipTo(structure, withName("ADMINISTRATIVE_ATTACHMENT"));
 						}
+					}
+				}
+			}
+
+			if (structuresByFunctions != null && structuresByFunctions.size() > 0) {
+				for (String o : structuresByFunctions) {
+					Structure s = this.structures.get(o);
+					if (s != null) {
+						Node spg = s.getProfileGroup(profileExternalId);
 						if (spg != null) {
 							u.createRelationshipTo(spg, withName("IN"));
 						}

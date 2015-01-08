@@ -5,6 +5,9 @@ import fr.wseduc.aaf.dictionary.Structure;
 import org.vertx.java.core.json.JsonArray;
 import org.vertx.java.core.json.JsonObject;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class PersonnelImportProcessing extends BaseImportProcessing {
 
 	protected PersonnelImportProcessing(String path) {
@@ -29,7 +32,16 @@ public class PersonnelImportProcessing extends BaseImportProcessing {
 //		linkClassesFieldOfStudy(object.getArray("classesFieldOfStudy"));
 //		linkGroupsFieldOfStudy(object.getArray("groupsFieldOfStudy"));
 		String profile = detectProfile(object);
-		importer.createPersonnel(object, profile, classes, groups);
+		JsonArray functions = object.getArray("functions");
+		Set<String> structuresByFunctions = null;
+		if (functions != null) {
+			structuresByFunctions = new HashSet<>();
+			for (Object o: functions) {
+				if (!(o instanceof String) || !o.toString().contains("$")) continue;
+				structuresByFunctions.add(o.toString().substring(0, o.toString().indexOf('$')));
+			}
+		}
+		importer.createPersonnel(object, profile, structuresByFunctions, classes, groups);
 	}
 
 	protected String detectProfile(JsonObject object) {
