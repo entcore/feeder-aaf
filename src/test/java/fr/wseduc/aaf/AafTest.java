@@ -31,6 +31,8 @@ import static fr.wseduc.aaf.Util.createPostData;
 import static fr.wseduc.aaf.Util.toCypherUri;
 import static fr.wseduc.aaf.Util.toJson;
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 
 public class AafTest {
@@ -99,6 +101,23 @@ public class AafTest {
 		assertEquals(177, r.get(2));
 		assertEquals(177, r.get(3));
 		assertEquals(177 * 4 + 10 * 4 + 4, r.get(4));
+
+		query = "MATCH (u:User) return HEAD(u.profiles) limit 1";
+		json = toJson(createPostData(query, null));
+		response = Client.create()
+				.resource(toCypherUri(server.baseUri().toString()))
+				.accept(MediaType.APPLICATION_JSON_TYPE)
+				.type(MediaType.APPLICATION_JSON_TYPE)
+				.header("X-Stream", "true")
+				.post(ClientResponse.class, json);
+		res = response.getEntity(String.class);
+		log.info(res);
+		result = new JsonObject(res);
+		response.close();
+		String type = result.getArray("data").<JsonArray>get(0).get(0);
+		assertNotNull(type);
+		assertTrue("Personnel".equals(type) || "Teacher".equals(type) ||
+				"Student".equals(type) || "Relative".equals(type));
 	}
 
 	private Client jerseyClient() {

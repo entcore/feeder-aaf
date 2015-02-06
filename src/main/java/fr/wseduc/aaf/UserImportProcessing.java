@@ -1,6 +1,7 @@
 package fr.wseduc.aaf;
 
 import fr.wseduc.aaf.dictionary.Importer;
+import org.vertx.java.core.json.JsonArray;
 import org.vertx.java.core.json.JsonObject;
 
 import java.util.Set;
@@ -28,6 +29,7 @@ public class UserImportProcessing extends BaseImportProcessing {
 	@Override
 	public void process(JsonObject object) {
 		if (resp.contains(object.getString("externalId"))) {
+			object.putArray("profiles", new JsonArray().add("Relative"));
 			importer.createUser(object);
 		}
 	}

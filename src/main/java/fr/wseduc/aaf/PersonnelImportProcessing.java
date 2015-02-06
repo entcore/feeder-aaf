@@ -32,6 +32,8 @@ public class PersonnelImportProcessing extends BaseImportProcessing {
 //		linkClassesFieldOfStudy(object.getArray("classesFieldOfStudy"));
 //		linkGroupsFieldOfStudy(object.getArray("groupsFieldOfStudy"));
 		String profile = detectProfile(object);
+		object.putArray("profiles", new JsonArray()
+				.add((TEACHER_PROFILE_EXTERNAL_ID.equals(profile) ? "Teacher" : "Personnel")));
 		JsonArray functions = object.getArray("functions");
 		Set<String> structuresByFunctions = null;
 		if (functions != null) {
