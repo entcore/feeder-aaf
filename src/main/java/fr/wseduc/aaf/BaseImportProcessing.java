@@ -1,6 +1,7 @@
 package fr.wseduc.aaf;
 
 import fr.wseduc.aaf.dictionary.Importer;
+import org.apache.commons.lang3.text.translate.*;
 import org.neo4j.graphdb.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,8 @@ import org.xml.sax.ext.EntityResolver2;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 public abstract class BaseImportProcessing implements ImportProcessing {
@@ -18,6 +21,14 @@ public abstract class BaseImportProcessing implements ImportProcessing {
 	protected static final Logger log = LoggerFactory.getLogger(BaseImportProcessing.class);
 	protected final Importer importer = Importer.getInstance();
 	protected final String path;
+	private static final String[][] OTHER_UNESCAPE = {{"&quot;", "\""}};
+	public static final CharSequenceTranslator UNESCAPE_AAF =
+			new AggregateTranslator(
+					new LookupTranslator(OTHER_UNESCAPE),
+					new LookupTranslator(EntityArrays.ISO8859_1_UNESCAPE()),
+					new LookupTranslator(EntityArrays.HTML40_EXTENDED_UNESCAPE()),
+					new NumericEntityUnescaper()
+			);
 
 	protected BaseImportProcessing(String path) {
 		this.path = path;
@@ -35,7 +46,9 @@ public abstract class BaseImportProcessing implements ImportProcessing {
 			Arrays.sort(files);
 			for (File file : files) {
 				log.info("Parsing file : " + file.getName());
-				InputSource in = new InputSource(new FileInputStream(file));
+				byte[] encoded = Files.readAllBytes(Paths.get(file.getAbsolutePath()));
+				String content = UNESCAPE_AAF.translate(new String(encoded, "UTF-8"));
+				InputSource in = new InputSource(new StringReader(content));
 				AAFHandler sh = new AAFHandler(this);
 				XMLReader xr = XMLReaderFactory.createXMLReader();
 				xr.setContentHandler(sh);
