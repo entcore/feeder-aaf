@@ -19,6 +19,7 @@ import static org.neo4j.graphdb.DynamicRelationshipType.withName;
 public class Importer {
 
 	private static final Logger log = LoggerFactory.getLogger(Importer.class);
+	public static final String AAF = "AAF";
 	private final ConcurrentMap<String, Structure> structures = new ConcurrentHashMap<>();
 	private final ConcurrentMap<String, Profile> profiles = new ConcurrentHashMap<>();
 	private GraphDatabaseService db;
@@ -138,6 +139,7 @@ public class Importer {
 		if (error != null) {
 			log.warn(error);
 		} else {
+			object.putString("source", AAF);
 			Node n = getDb().createNode(label("User"));
 			JsonUtil.jsonToNode(object, n);
 		}
@@ -150,6 +152,7 @@ public class Importer {
 		if (error != null) {
 			log.warn(error);
 		} else {
+			object.putString("source", AAF);
 			Node u = getDb().createNode(label("User"));
 			JsonUtil.jsonToNode(object, u);
 
@@ -242,6 +245,7 @@ public class Importer {
 		if (error != null) {
 			log.warn(error);
 		} else {
+			object.putString("source", AAF);
 			Node u = getDb().createNode(label("User"));
 			JsonUtil.jsonToNode(object, u);
 
