@@ -100,7 +100,7 @@ public class AafTest {
 		assertEquals(10, r.get(1));
 		assertEquals(177, r.get(2));
 		assertEquals(177, r.get(3));
-		assertEquals(177 * 4 + 10 * 4 + 4, r.get(4));
+		assertEquals(177 * 5 + 10 * 5 + 5, r.get(4));
 
 		query = "MATCH (u:User) return HEAD(u.profiles) limit 1";
 		json = toJson(createPostData(query, null));

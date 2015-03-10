@@ -22,6 +22,7 @@ public class StructureImportProcessing extends BaseImportProcessing {
 			importer.createProfile(RELATIVE_PROFILE);
 			importer.createProfile(PERSONNEL_PROFILE);
 			importer.createProfile(TEACHER_PROFILE);
+			importer.createProfile(GUEST_PROFILE);
 			DefaultFunctions.createOrUpdateFunctions(importer);
 			tx.success();
 		} catch (Exception e) {
