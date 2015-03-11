@@ -8,7 +8,7 @@
 <attributes>
 <attr name="ENTPersonJointure"><value>2605692</value></attr>
 <attr name="ENTEleveStructRattachId"><value>837982</value></attr>
-<attr name="ENTPersonDateNaissance"><value>14/09/1995</value></attr>
+<attr name="ENTPersonDateNaissance"><value>14/091995</value></attr>
 <attr name="ENTPersonNomPatro"><value>AZOT</value></attr>
 <attr name="sn"><value>Long</value></attr>
 <attr name="givenName"><value>Kù</value></attr>

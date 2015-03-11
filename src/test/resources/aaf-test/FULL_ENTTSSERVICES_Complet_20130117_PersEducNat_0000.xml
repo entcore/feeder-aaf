@@ -7,12 +7,12 @@
 <identifier><id>2397000</id></identifier>
 <attributes>
 <attr name="ENTPersonJointure"><value>2397000</value></attr>
-<attr name="ENTPersonDateNaissance"><value>07/08/1967</value></attr>
+<attr name="ENTPersonDateNaissance"><value>07/081967</value></attr>
 <attr name="ENTPersonNomPatro"><value>CREPIER</value></attr>
 <attr name="sn"><value>CREPIER</value></attr>
 <attr name="givenName"><value>ANA</value></attr>
 <attr name="personalTitle"><value>M.</value></attr>
-<attr name="mail"><value/></attr>
+<attr name="mail"><value>blabla</value></attr>
 <attr name="ENTPersonStructRattach"><value/></attr>
 <attr name="ENTAuxEnsCategoDiscipline"><value/></attr>
 <attr name="ENTAuxEnsDisciplinesPoste"><value/></attr>
