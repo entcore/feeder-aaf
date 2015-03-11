@@ -190,7 +190,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<includeArtifactIds>jackson-annotations,jackson-core,jackson-databind,vertx-core</includeArtifactIds>
+							<includeArtifactIds>jackson-annotations,jackson-core,jackson-databind,vertx-core,commons-lang3</includeArtifactIds>
 							<outputDirectory>${project.build.directory}</outputDirectory>
 						</configuration>
 					</execution>
